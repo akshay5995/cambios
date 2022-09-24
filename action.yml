@@ -1,5 +1,5 @@
-name: "Cambios"
-description: "Github action to detect if there are any changes in pnpm workspace or repository using pnpm since some point (git ref, git tag or commit-sha) in your git history"
+name: "Cambios (pnpm)"
+description: "Github action to detect if there are any changes in repository using pnpm since some point in your git history"
 inputs:
   package-name:
     description: "Package name in your package.json of the package you want to filter"
