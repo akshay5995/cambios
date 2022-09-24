@@ -1,0 +1,90 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        id: node-modules-cache
+        with:
+          path: "./node_modules"
+          key: pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+      - name: Install dependencies
+        if: steps.node-moduels-cache.outputs.cache-hit != 'true'
+        run: pnpm install --strict-peer-dependencies --frozen-lockfile
+  lint:
+    needs: [prepare]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: "./node_modules"
+          key: pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+      - run: pnpm lint
+  test:
+    needs: [prepare]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: "./node_modules"
+          key: pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+      - run: pnpm test:ci
+  integration:
+    needs: [prepare]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Run action
+        uses: ./
+        id: changed-package-action
+      - name: echo changed packages
+        run: echo ${{ steps.changed-package-action.outputs.changed-packages }}
+      - name: echo CHANGE_DETECTED env
+        run: echo ${{ env.CHANGE_DETECTED }}

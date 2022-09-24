@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions: write-all
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+      - uses: actions/cache@v3
+        id: node-modules-cache
+        with:
+          path: "./node_modules"
+          key: pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+      - name: Install dependencies
+        if: steps.node-moduels-cache.outputs.cache-hit != 'true'
+        run: pnpm install --strict-peer-dependencies --frozen-lockfile
+      - name: Build action
+        run: pnpm build
+      - name: Run semantic-release
+        run: pnpm release --ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

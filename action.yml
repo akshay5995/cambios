@@ -1,0 +1,17 @@
+name: "Cambios"
+description: "Github action to detect if there are any changes in pnpm workspace or repository using pnpm since some point (git ref, git tag or commit-sha) in your git history"
+inputs:
+  package-name:
+    description: "Package name in your package.json of the package you want to filter"
+    required: false
+    default: ""
+  since:
+    description: "Change since some reference from your git history e.g, git tag, git ref or commit-sha"
+    required: false
+    default: "origin/main"
+outputs:
+  changed-packages:
+    description: "List of package names that have changed"
+runs:
+  using: "node16"
+  main: "dist/index.js"
