@@ -8652,6 +8652,42 @@ exports["default"] = getRootPackageName;
 
 /***/ }),
 
+/***/ 2522:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getRootPackageName = exports.getChangedPackages = void 0;
+const getChangedPackages_1 = __importDefault(__nccwpck_require__(2780));
+exports.getChangedPackages = getChangedPackages_1.default;
+const getRootPackageName_1 = __importDefault(__nccwpck_require__(786));
+exports.getRootPackageName = getRootPackageName_1.default;
+
+
+/***/ }),
+
+/***/ 4014:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.setFailedMessage = exports.outputChangedPackages = exports.setEnvChangeDetected = exports.since = exports.packageName = void 0;
+const inputs_1 = __nccwpck_require__(4840);
+Object.defineProperty(exports, "packageName", ({ enumerable: true, get: function () { return inputs_1.packageName; } }));
+Object.defineProperty(exports, "since", ({ enumerable: true, get: function () { return inputs_1.since; } }));
+const outputs_1 = __nccwpck_require__(4937);
+Object.defineProperty(exports, "setEnvChangeDetected", ({ enumerable: true, get: function () { return outputs_1.setEnvChangeDetected; } }));
+Object.defineProperty(exports, "outputChangedPackages", ({ enumerable: true, get: function () { return outputs_1.outputChangedPackages; } }));
+Object.defineProperty(exports, "setFailedMessage", ({ enumerable: true, get: function () { return outputs_1.setFailedMessage; } }));
+
+
+/***/ }),
+
 /***/ 4840:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
@@ -8666,13 +8702,13 @@ exports.since = (0, core_1.getInput)("since");
 
 /***/ }),
 
-/***/ 8231:
+/***/ 4937:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.outputChangedPackages = exports.setEnvChangeDetected = void 0;
+exports.setFailedMessage = exports.outputChangedPackages = exports.setEnvChangeDetected = void 0;
 const core_1 = __nccwpck_require__(5681);
 const setEnvChangeDetected = (bool) => {
     (0, core_1.exportVariable)("CHANGE_DETECTED", bool);
@@ -8682,11 +8718,30 @@ const outputChangedPackages = (packageNames) => {
     (0, core_1.setOutput)("changed-packages", JSON.stringify(packageNames));
 };
 exports.outputChangedPackages = outputChangedPackages;
+const setFailedMessage = (err) => {
+    (0, core_1.setFailed)(err.message);
+};
+exports.setFailedMessage = setFailedMessage;
 
 
 /***/ }),
 
 /***/ 8891:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const run_1 = __importDefault(__nccwpck_require__(7166));
+(0, run_1.default)();
+
+
+/***/ }),
+
+/***/ 7166:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -8700,29 +8755,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core_1 = __nccwpck_require__(5681);
-const getChangedPackages_1 = __importDefault(__nccwpck_require__(2780));
-const getRootPackageName_1 = __importDefault(__nccwpck_require__(786));
-const inputs_1 = __nccwpck_require__(4840);
-const ouputs_1 = __nccwpck_require__(8231);
-const main = () => __awaiter(void 0, void 0, void 0, function* () {
+const core_1 = __nccwpck_require__(2522);
+const helpers_1 = __nccwpck_require__(4014);
+const run = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const changedPackages = yield (0, getChangedPackages_1.default)(inputs_1.since);
+        const changedPackages = yield (0, core_1.getChangedPackages)(helpers_1.since);
         const packageNames = changedPackages.map((p) => p.name);
-        const rootPackage = yield (0, getRootPackageName_1.default)();
-        const hasRootOrGivenPackageChanged = packageNames.includes(rootPackage) || packageNames.includes(inputs_1.packageName);
-        (0, ouputs_1.setEnvChangeDetected)(hasRootOrGivenPackageChanged);
-        (0, ouputs_1.outputChangedPackages)(packageNames);
+        const rootPackage = yield (0, core_1.getRootPackageName)();
+        const hasRootOrGivenPackageChanged = packageNames.includes(rootPackage) || packageNames.includes(helpers_1.packageName);
+        (0, helpers_1.setEnvChangeDetected)(hasRootOrGivenPackageChanged);
+        (0, helpers_1.outputChangedPackages)(packageNames);
     }
     catch (error) {
-        (0, core_1.setFailed)(error.message);
+        (0, helpers_1.setFailedMessage)(error);
     }
 });
-main();
+exports["default"] = run;
 
 
 /***/ }),

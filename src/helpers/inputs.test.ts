@@ -20,10 +20,6 @@ jest.mock("@actions/core", () => ({
 import { packageName, since } from "./inputs";
 
 describe("inputs", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-    jest.clearAllMocks();
-  });
   test("should get the right inputs supplied", () => {
     expect(packageName).toBe(PACKAGE_NAME_MOCKED);
     expect(since).toBe(SINCE_MOCKED);
