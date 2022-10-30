@@ -5,7 +5,7 @@ export const setEnvChangeDetected = (bool: boolean): void => {
 };
 
 export const outputChangedPackages = (packageNames: string[]): void => {
-  setOutput("changed-packages", JSON.stringify(packageNames));
+  setOutput("changed-packages", JSON.stringify(JSON.stringify(packageNames)));
 };
 
 export const setFailedMessage = (err: Error): void => {

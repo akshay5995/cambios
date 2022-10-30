@@ -27,7 +27,7 @@ describe("outputs", () => {
     expect(setOutputMocked).toBeCalledTimes(1);
     expect(setOutputMocked).toBeCalledWith(
       "changed-packages",
-      JSON.stringify(changedPackages)
+      JSON.stringify(JSON.stringify(changedPackages))
     );
   });
 
